@@ -13,6 +13,7 @@
 
 
 import random
+import sys
 
 import util
 from game import Agent
@@ -74,17 +75,28 @@ class ReflexAgent(Agent):
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
         "*** YOUR CODE HERE ***"
         dF = []
-        for fantasma in newGhostStates:
-            dF.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
-        distFan = min(dF)
+        dC = []
+        for i, fantasma in enumerate(newGhostStates):
+            if newScaredTimes[i]==0:
+                dF.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
+            '''else:
+                dC.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))'''
+        if len(dF)!=0:
+            distFan = min(dF)
+        else:
+            distFan = sys.maxsize
 
         por_comer = []
-        dC = []
+
+        ''' for capsule in successorGameState.getCapsules():
+                    dC.append(abs(newPos[0] - capsule[0]) + abs(newPos[1] - capsule[1]))'''
 
         for x, fila in enumerate(newFood):
             for y, comida in enumerate(fila):
                 if comida:
                     por_comer.append((x, y))
+
+
 
         for comida in por_comer:
             dC.append(abs(newPos[0] - comida[0]) + abs(newPos[1] - comida[1]))
@@ -105,7 +117,6 @@ class ReflexAgent(Agent):
             ema = 1 / distCom
         else:
             ema = -distCom
-
         return ema + score
 
 
