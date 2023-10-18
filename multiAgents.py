@@ -186,16 +186,12 @@ class MinimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE FROM HERE ***"
         agentIndex = self.index
 
-        print('\n\nFor depth:', self.depth)
-        print('For number of ghosts:', gameState.getNumAgents()-1)
-
         actionValue = {}
-        
+
         legalActions = gameState.getLegalActions(agentIndex)
         for action in legalActions:
-            print(action)
             succesorGameState = gameState.generateSuccessor(agentIndex, action)
-            value = self.value(succesorGameState, agentIndex, 0)
+            value = self.value(succesorGameState, agentIndex + 1, 0)
             actionValue[action] = value
         
         maxValue = max(actionValue.values())
@@ -203,16 +199,14 @@ class MinimaxAgent(MultiAgentSearchAgent):
             if value == maxValue:
                 return action
 
-
-
     def value(self, state, agent, layer):
+        if state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
         # Si ha pasado por todos los agentes:
-        if agent >= state.getNumAgents():
+        if agent == state.getNumAgents():
             agent = 0
             layer += 1
-            print('\tVuelta', layer, 'completada')
-            if layer >= self.depth:
-                print('\tFinished in layer', layer, '/', self.depth)
+            if layer == self.depth:
                 return self.evaluationFunction(state)
         if agent == 0: return self.maxValue(state, layer)
         else: return self.minValue(state, agent, layer)
@@ -230,8 +224,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         legalActions = state.getLegalActions(agent)
         for action in legalActions:
             succesorGameState = state.generateSuccessor(agent, action)
-            value = self.value(succesorGameState, agent + 1, layer)
-            v = min(v, value)
+            v = min(v, self.value(succesorGameState, agent + 1, layer))
         return v
 
         "*** YOUR CODE TO HERE ***"
