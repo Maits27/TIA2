@@ -185,15 +185,17 @@ class MinimaxAgent(MultiAgentSearchAgent):
         """
         "*** YOUR CODE FROM HERE ***"
         agentIndex = self.index
-        legalActions = gameState.getLegalActions(agentIndex)
-        currentAgent = 0
-        self.layer = 0
+
+        print('\n\nFor depth:', self.depth)
+        print('For number of ghosts:', gameState.getNumAgents()-1)
 
         actionValue = {}
         
+        legalActions = gameState.getLegalActions(agentIndex)
         for action in legalActions:
+            print(action)
             succesorGameState = gameState.generateSuccessor(agentIndex, action)
-            value = self.value(succesorGameState, currentAgent)
+            value = self.value(succesorGameState, agentIndex, 0)
             actionValue[action] = value
         
         maxValue = max(actionValue.values())
@@ -203,31 +205,33 @@ class MinimaxAgent(MultiAgentSearchAgent):
 
 
 
-    def value(self, state, agent):
+    def value(self, state, agent, layer):
         # Si ha pasado por todos los agentes:
         if agent >= state.getNumAgents():
             agent = 0
-            self.layer += 1
-        if self.layer >= self.depth:
-            return self.evaluationFunction(state)
-        else:
-            if agent == 0: return self.maxValue(state)
-            else: return self.minValue(state, agent)
+            layer += 1
+            print('\tVuelta', layer, 'completada')
+            if layer >= self.depth:
+                print('\tFinished in layer', layer, '/', self.depth)
+                return self.evaluationFunction(state)
+        if agent == 0: return self.maxValue(state, layer)
+        else: return self.minValue(state, agent, layer)
 
-    def maxValue(self, state):
-        v = sys.maxsize
+    def maxValue(self, state, layer):
+        v = -sys.maxsize
         legalActions = state.getLegalActions(self.index)
         for action in legalActions:
             succesorGameState = state.generateSuccessor(self.index, action)
-            v = max(v, self.value(succesorGameState, 1))
+            v = max(v, self.value(succesorGameState, 1, layer))
         return v
 
-    def minValue(self, state, agent):
-        v = 0
+    def minValue(self, state, agent, layer):
+        v = sys.maxsize
         legalActions = state.getLegalActions(agent)
         for action in legalActions:
             succesorGameState = state.generateSuccessor(agent, action)
-            v = min(v, self.value(succesorGameState, agent + 1))
+            value = self.value(succesorGameState, agent + 1, layer)
+            v = min(v, value)
         return v
 
         "*** YOUR CODE TO HERE ***"
