@@ -183,8 +183,57 @@ class MinimaxAgent(MultiAgentSearchAgent):
         gameState.isLose():
         Returns whether or not the game state is a losing state
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "*** YOUR CODE FROM HERE ***"
+        agentIndex = self.index
+        legalActions = gameState.getLegalActions(agentIndex)
+        currentAgent = 0
+        self.layer = 0
+
+        actionValue = {}
+        
+        for action in legalActions:
+            succesorGameState = gameState.generateSuccessor(agentIndex, action)
+            value = self.value(succesorGameState, currentAgent)
+            actionValue[action] = value
+        
+        maxValue = max(actionValue.values())
+        for action, value in actionValue.items():
+            if value == maxValue:
+                return action
+
+
+
+    def value(self, state, agent):
+        # Si ha pasado por todos los agentes:
+        if agent >= state.getNumAgents():
+            agent = 0
+            self.layer += 1
+        if self.layer >= self.depth:
+            return self.evaluationFunction(state)
+        else:
+            if agent == 0: return self.maxValue(state)
+            else: return self.minValue(state, agent)
+
+    def maxValue(self, state):
+        v = sys.maxsize
+        legalActions = state.getLegalActions(self.index)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(self.index, action)
+            v = max(v, self.value(succesorGameState, 1))
+        return v
+
+    def minValue(self, state, agent):
+        v = 0
+        legalActions = state.getLegalActions(agent)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(agent, action)
+            v = min(v, self.value(succesorGameState, agent + 1))
+        return v
+
+        "*** YOUR CODE TO HERE ***"
+
+
+    
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
