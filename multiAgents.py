@@ -12,14 +12,11 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-<<<<<<< HEAD
-=======
 import random
 import sys
 
 import util
 from game import Agent
->>>>>>> master
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -81,15 +78,6 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
-<<<<<<< HEAD
-        #distancesToGhosts = [abs(newPos[0] - ) for ghost in newGhostStates]
-        print(newPos)
-        for ghost in newGhostStates:
-            print(ghost)
-
-        "*** YOUR CODE HERE ***"
-        return successorGameState.getScore()
-=======
 
         #INICIALIZAR LISTAS
         dF = []
@@ -97,7 +85,7 @@ class ReflexAgent(Agent):
         por_comer = []
         score = successorGameState.getScore()
 
-        # AÑADIR COMIDAS Y CÁPSULAS
+        # Aï¿½ADIR COMIDAS Y Cï¿½PSULAS
         for x, fila in enumerate(newFood):
             for y, comida in enumerate(fila):
                 if comida:
@@ -108,14 +96,14 @@ class ReflexAgent(Agent):
         for comida in por_comer:
             dC.append(abs(newPos[0] - comida[0]) + abs(newPos[1] - comida[1]))
 
-        # AÑADIR FANTASMAS
+        # Aï¿½ADIR FANTASMAS
         for i, fantasma in enumerate(newGhostStates):
             if newScaredTimes[i]==0:
                 dF.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
-            else: # En caso de que el fantasma esté huyendo se considera comida
+            else: # En caso de que el fantasma estï¿½ huyendo se considera comida
                 dC.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
 
-        # SACAR EL MÍNIMO DE CADA UNO (EL MÁS CERCANO)
+        # SACAR EL Mï¿½NIMO DE CADA UNO (EL Mï¿½S CERCANO)
         if len(dF) != 0: distFan = min(dF)
         else: distFan = sys.maxsize
 
@@ -136,7 +124,6 @@ class ReflexAgent(Agent):
 
         return ema + score
 
->>>>>>> master
 
 def scoreEvaluationFunction(currentGameState):
     """
