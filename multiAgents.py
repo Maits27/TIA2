@@ -12,12 +12,11 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
-import random
-
-import util
-from game import Agent
 from util import manhattanDistance
+from game import Directions
+import random, util
 
+from game import Agent
 
 class ReflexAgent(Agent):
     """
@@ -28,6 +27,7 @@ class ReflexAgent(Agent):
     it in any way you see fit, so long as you don't touch our method
     headers.
     """
+
 
     def getAction(self, gameState):
         """
@@ -45,7 +45,7 @@ class ReflexAgent(Agent):
         scores = [self.evaluationFunction(gameState, action) for action in legalMoves]
         bestScore = max(scores)
         bestIndices = [index for index in range(len(scores)) if scores[index] == bestScore]
-        chosenIndex = random.choice(bestIndices)  # Pick randomly among the best
+        chosenIndex = random.choice(bestIndices) # Pick randomly among the best
 
         "Add more of your code here if you want to"
 
@@ -72,42 +72,14 @@ class ReflexAgent(Agent):
         newFood = successorGameState.getFood()
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
+
+        #distancesToGhosts = [abs(newPos[0] - ) for ghost in newGhostStates]
+        print(newPos)
+        for ghost in newGhostStates:
+            print(ghost)
+
         "*** YOUR CODE HERE ***"
-        dF = []
-        for fantasma in newGhostStates:
-            dF.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
-        distFan = min(dF)
-
-        por_comer = []
-        dC = []
-
-        for x, fila in enumerate(newFood):
-            for y, comida in enumerate(fila):
-                if comida:
-                    por_comer.append((x, y))
-
-        for comida in por_comer:
-            dC.append(abs(newPos[0] - comida[0]) + abs(newPos[1] - comida[1]))
-        if len(dC) == 0:
-            distCom = 0
-        else:
-            distCom = min(dC)
-
-        score = successorGameState.getScore()
-
-        if distCom == 0:
-            ema = 1000000000000000
-        elif distFan == 0:
-            ema = -1000000000000000
-        elif distCom == distFan:
-            ema = -1 / distFan
-        elif distCom < distFan:
-            ema = 1 / distCom
-        else:
-            ema = -distCom
-
-        return ema + score
-
+        return successorGameState.getScore()
 
 def scoreEvaluationFunction(currentGameState):
     """
@@ -118,7 +90,6 @@ def scoreEvaluationFunction(currentGameState):
     (not reflex agents).
     """
     return currentGameState.getScore()
-
 
 class MultiAgentSearchAgent(Agent):
     """
@@ -135,19 +106,17 @@ class MultiAgentSearchAgent(Agent):
     is another abstract class.
     """
 
-    def __init__(self, evalFn='scoreEvaluationFunction', depth='2'):
-        super().__init__()
-        self.index = 0  # Pacman is always agent index 0
+    def __init__(self, evalFn = 'scoreEvaluationFunction', depth = '2'):
+        self.index = 0 # Pacman is always agent index 0
         self.evaluationFunction = util.lookup(evalFn, globals())
         self.depth = int(depth)
-
 
 class MinimaxAgent(MultiAgentSearchAgent):
     """
     Your minimax agent (question 2)
     """
 
-    def getAction(self, game_state):
+    def getAction(self, gameState):
         """
         Returns the minimax action from the current gameState using self.depth
         and self.evaluationFunction.
@@ -178,14 +147,12 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     Your minimax agent with alpha-beta pruning (question 3)
     """
 
-    def getAction(self, game_state):
+    def getAction(self, gameState):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
-
-
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
@@ -202,7 +169,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         "*** YOUR CODE HERE ***"
         util.raiseNotDefined()
 
-
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
@@ -210,14 +176,8 @@ def betterEvaluationFunction(currentGameState):
 
     DESCRIPTION: <write something here so we know what you did>
     """
-    pacman_pos = currentGameState.getPacmanPosition()
-    newFood = currentGameState.getFood()
-    newGhostStates = currentGameState.getGhostStates()
-    newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
-
     "*** YOUR CODE HERE ***"
     util.raiseNotDefined()
-
 
 # Abbreviation
 better = betterEvaluationFunction
