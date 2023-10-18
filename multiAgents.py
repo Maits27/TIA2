@@ -12,6 +12,14 @@
 # Pieter Abbeel (pabbeel@cs.berkeley.edu).
 
 
+<<<<<<< HEAD
+=======
+import random
+import sys
+
+import util
+from game import Agent
+>>>>>>> master
 from util import manhattanDistance
 from game import Directions
 import random, util
@@ -73,6 +81,7 @@ class ReflexAgent(Agent):
         newGhostStates = successorGameState.getGhostStates()
         newScaredTimes = [ghostState.scaredTimer for ghostState in newGhostStates]
 
+<<<<<<< HEAD
         #distancesToGhosts = [abs(newPos[0] - ) for ghost in newGhostStates]
         print(newPos)
         for ghost in newGhostStates:
@@ -80,6 +89,54 @@ class ReflexAgent(Agent):
 
         "*** YOUR CODE HERE ***"
         return successorGameState.getScore()
+=======
+
+        #INICIALIZAR LISTAS
+        dF = []
+        dC = []
+        por_comer = []
+        score = successorGameState.getScore()
+
+        # AÑADIR COMIDAS Y CÁPSULAS
+        for x, fila in enumerate(newFood):
+            for y, comida in enumerate(fila):
+                if comida:
+                    por_comer.append((x, y))
+        for capsule in currentGameState.getCapsules():
+                por_comer.append(capsule)
+
+        for comida in por_comer:
+            dC.append(abs(newPos[0] - comida[0]) + abs(newPos[1] - comida[1]))
+
+        # AÑADIR FANTASMAS
+        for i, fantasma in enumerate(newGhostStates):
+            if newScaredTimes[i]==0:
+                dF.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
+            else: # En caso de que el fantasma esté huyendo se considera comida
+                dC.append(abs(newPos[0] - fantasma.configuration.pos[0]) + abs(newPos[1] - fantasma.configuration.pos[1]))
+
+        # SACAR EL MÍNIMO DE CADA UNO (EL MÁS CERCANO)
+        if len(dF) != 0: distFan = min(dF)
+        else: distFan = sys.maxsize
+
+        if len(dC) == 0: distCom = 0
+        else: distCom = min(dC)
+
+        # CONDICIONES
+        if distCom == 0:
+            ema = sys.maxsize
+        elif distFan == 0:
+            ema = -sys.maxsize
+        elif distCom == distFan:
+            ema = -1 / distFan
+        elif distCom < distFan:
+            ema = 1 / distCom
+        else:
+            ema = -distCom
+
+        return ema + score
+
+>>>>>>> master
 
 def scoreEvaluationFunction(currentGameState):
     """
