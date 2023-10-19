@@ -241,8 +241,57 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
         """
         Returns the minimax action using self.depth and self.evaluationFunction
         """
-        "*** YOUR CODE HERE ***"
-        util.raiseNotDefined()
+        "*** YOUR CODE FROM HERE ***"
+
+        agentIndex = self.index
+
+        actionValue = {}
+
+
+        legalActions = gameState.getLegalActions(agentIndex)
+        for action in legalActions:
+            succesorGameState = gameState.generateSuccessor(agentIndex, action)
+            value = self.value(succesorGameState, agentIndex + 1, 0, -sys.maxsize, sys.maxsize) # succesor, agent, layer, alpha, beta
+            actionValue[action] = value
+        
+        maxValue = max(actionValue.values())
+        for action, value in actionValue.items():
+            if value == maxValue:
+                return action
+
+    def value(self, state, agent, layer, alpha, beta):
+        if state.isWin() or state.isLose():
+            return self.evaluationFunction(state)
+        # Si ha pasado por todos los agentes:
+        if agent == state.getNumAgents():
+            agent = 0
+            layer += 1
+            if layer == self.depth:
+                return self.evaluationFunction(state)
+        if agent == 0: return self.maxValue(state, layer, alpha, beta)
+        else: return self.minValue(state, agent, layer, alpha, beta)
+
+    def maxValue(self, state, layer, alpha, beta):
+        v = -sys.maxsize
+        legalActions = state.getLegalActions(self.index)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(self.index, action)
+            v = max(v, self.value(succesorGameState, 1, layer, alpha, beta))
+            if v > beta: return v
+            alpha = max(alpha, v)
+        return v
+
+    def minValue(self, state, agent, layer, alpha, beta):
+        v = sys.maxsize
+        legalActions = state.getLegalActions(agent)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(agent, action)
+            v = min(v, self.value(succesorGameState, agent + 1, layer, alpha, beta))
+            if v < alpha: return v
+            beta = min(beta, v)
+        return v
+    
+        "*** YOUR CODE TO HERE ***"
 
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
