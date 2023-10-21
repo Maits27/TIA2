@@ -228,9 +228,7 @@ class MinimaxAgent(MultiAgentSearchAgent):
         return state.isWin() or state.isLose() or layer == self.depth
 
         "*** YOUR CODE TO HERE ***"
-
-
-    
+ 
 
 class AlphaBetaAgent(MultiAgentSearchAgent):
     """
@@ -319,7 +317,55 @@ def betterEvaluationFunction(currentGameState):
     DESCRIPTION: <write something here so we know what you did>
     """
     "*** YOUR CODE HERE ***"
-    util.raiseNotDefined()
+    ghostStates = currentGameState.getGhostStates()
+    pos = currentGameState.getPacmanPosition()
+    food = currentGameState.getFood()
+    scaredTimes = [ghostStates.scaredTimer for ghosState in ghostStates]
+
+    #INICIALIZAR LISTAS
+    dF = []
+    dC = []
+    por_comer = []
+    score = currentGameState.getScore()
+
+    # A�ADIR COMIDAS Y C�PSULAS
+    for x, fila in enumerate(food):
+        for y, comida in enumerate(fila):
+            if comida:
+                por_comer.append((x, y))
+    for capsule in currentGameState.getCapsules():
+            por_comer.append(capsule)
+
+    for comida in por_comer:
+        dC.append(abs(pos[0] - comida[0]) + abs(pos[1] - comida[1]))
+
+    # A�ADIR FANTASMAS
+    for i, fantasma in enumerate(ghostStates):
+        if scaredTimes[i]==0:
+            dF.append(abs(pos[0] - fantasma.configuration.pos[0]) + abs(pos[1] - fantasma.configuration.pos[1]))
+        else: # En caso de que el fantasma est� huyendo se considera comida
+            dC.append(abs(pos[0] - fantasma.configuration.pos[0]) + abs(pos[1] - fantasma.configuration.pos[1]))
+
+    # SACAR EL M�NIMO DE CADA UNO (EL M�S CERCANO)
+    if len(dF) != 0: distFan = min(dF)
+    else: distFan = sys.maxsize
+
+    if len(dC) == 0: distCom = 0
+    else: distCom = min(dC)
+
+    # CONDICIONES
+    if distCom == 0:
+        ema = sys.maxsize
+    elif distFan == 0:
+        ema = -sys.maxsize
+    elif distCom == distFan:
+        ema = -1 / distFan
+    elif distCom < distFan:
+        ema = 1 / distCom
+    else:
+        ema = -distCom
+
+    return ema + score
 
 # Abbreviation
 better = betterEvaluationFunction
