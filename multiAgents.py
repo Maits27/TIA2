@@ -353,8 +353,6 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         return state.isWin() or state.isLose() or layer == self.depth
         "*** YOUR CODE TO HERE ***"
 
-        util.raiseNotDefined()
-
 def betterEvaluationFunction(currentGameState):
     """
     Your extreme ghost-hunting, pellet-nabbing, food-gobbling, unstoppable
