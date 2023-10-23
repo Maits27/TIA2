@@ -294,6 +294,7 @@ class AlphaBetaAgent(MultiAgentSearchAgent):
     
         "*** YOUR CODE TO HERE ***"
 
+
 class ExpectimaxAgent(MultiAgentSearchAgent):
     """
       Your expectimax agent (question 4)
@@ -306,7 +307,52 @@ class ExpectimaxAgent(MultiAgentSearchAgent):
         All ghosts should be modeled as choosing uniformly at random from their
         legal moves.
         """
-        "*** YOUR CODE HERE ***"
+        "*** YOUR CODE FROM HERE ***"
+        agentIndex = self.index
+
+        actionValue = {}
+
+        legalActions = gameState.getLegalActions(agentIndex)
+        for action in legalActions:
+            succesorGameState = gameState.generateSuccessor(agentIndex, action)
+            value = self.value(succesorGameState, agentIndex + 1, 0)
+            actionValue[action] = value
+        
+        maxValue = max(actionValue.values())
+        for action, value in actionValue.items():
+            if value == maxValue:
+                return action
+
+    def value(self, state, agent, layer):
+        # Si ha pasado por todos los agentes:
+        if agent == state.getNumAgents():
+            agent = 0
+            layer += 1
+        if self.isTerminal(state, layer): return self.evaluationFunction(state)
+        if agent == 0: return self.maxValue(state, layer)
+        else: return self.exp(state, agent, layer)
+
+    def maxValue(self, state, layer):
+        v = -sys.maxsize
+        legalActions = state.getLegalActions(self.index)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(self.index, action)
+            v = max(v, self.value(succesorGameState, 1, layer))
+        return v
+
+    def exp(self, state, agent, layer):
+        v = 0
+        legalActions = state.getLegalActions(agent)
+        p = 1/len(legalActions)
+        for action in legalActions:
+            succesorGameState = state.generateSuccessor(agent, action)
+            v += p * self.value(succesorGameState, agent + 1, layer)
+        return v
+    
+    def isTerminal(self, state, layer):
+        return state.isWin() or state.isLose() or layer == self.depth
+        "*** YOUR CODE TO HERE ***"
+
         util.raiseNotDefined()
 
 def betterEvaluationFunction(currentGameState):
@@ -320,7 +366,7 @@ def betterEvaluationFunction(currentGameState):
     ghostStates = currentGameState.getGhostStates()
     pos = currentGameState.getPacmanPosition()
     food = currentGameState.getFood()
-    scaredTimes = [ghostStates.scaredTimer for ghosState in ghostStates]
+    scaredTimes = [ghostState.scaredTimer for ghostState in ghostStates]
 
     #INICIALIZAR LISTAS
     dF = []
